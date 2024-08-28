@@ -5,7 +5,7 @@ class SocketClient {
     public baseUrl: string;
     private _path: string;
     private _handlers: Map;
-    constructor(path: string, baseUrl: string) {
+    constructor(path: string, baseUrl: string, setError: (msg: string) => void) {
         this.baseUrl = baseUrl || 'wss://stream.binance.com/';
         this._path = path;
         this._createSocket();
@@ -33,8 +33,8 @@ class SocketClient {
                 const message = JSON.parse(msg.data);
                 if (this.isMultiStream(message)) {
                     this._handlers.get(message.stream).forEach(cb => cb(message));
-                } else if (message.e && this._handlers.has(message.e)) {
-                    this._handlers.get(message.e).forEach(cb => {
+                } else if (message.e && this._handlers.has(message.s)) {
+                    this._handlers.get(message.s).forEach(cb => {
                         cb(message);
                     });
                 } else {
@@ -61,11 +61,11 @@ class SocketClient {
         }, 5000);
     }
 
-    setHandler(method: string, callback:(params: BinanceSocketData) => void) {
-        if (!this._handlers.has(method)) {
-            this._handlers.set(method, []);
+    setHandler(symbol: string, callback:(params: BinanceSocketData) => void) {
+        if (!this._handlers.has(symbol)) {
+            this._handlers.set(symbol, []);
         }
-        this._handlers.get(method).push(callback);
+        this._handlers.get(symbol).push(callback);
     }
 
     removeHandler(method: string){

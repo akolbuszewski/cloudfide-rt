@@ -4,7 +4,6 @@ import SocketClient from "../lib/socketClient";
 import {mapToTradeData} from "../lib/mapToTradeData";
 
 
-
 export interface BinanceSocketData {
     "e": string;    // Event type
     "E": number; // Event time
@@ -21,24 +20,30 @@ export interface BinanceSocketData {
 
 export const useBinanceTradeData = (symbol: string) => {
     const [tradeData, setTradeData] = useState<Array<TradeData>>([]);
-    useEffect(() =>{
+    const [errors, setErrors] = useState<Array<string>>([]);
+
+    useEffect(() => {
         const streamName = `${symbol.toLowerCase()}@trade`;
 
-        const socketClient = new SocketClient(`ws/${streamName}`, 'wss://stream.binance.com:9443/');
+        const socketClient = new SocketClient(`ws/${streamName}`, 'wss://stream.binance.com:9443/', (e) => setErrors((errs => [...errs, e])));
 
         const getTradeData = async () => {
-            const data = await getBinanceTradesList(symbol);
-            setTradeData(data);
-            socketClient.setHandler(symbol, (params: BinanceSocketData) => {
-                setTradeData((td) => [...td, mapToTradeData(params)])
-            });
+            try {
+                const data = await getBinanceTradesList(symbol);
+                setTradeData(data);
+                socketClient.setHandler(symbol, (params: BinanceSocketData) => {
+                    setTradeData((td) => [...td, mapToTradeData(params)])
+                });
+            } catch (e) {
+                //tutaj moglibysmy bardziej przyjrzec sie jakie blędy lecą
+                setErrors(errs => [...errs, (e as Error).message]);
+            }
         };
         getTradeData();
-        () => {
+        return () => {
             socketClient.removeHandler(symbol);
         }
-        //const interval = setInterval(getTradeData, 100);
     }, [symbol]);
 
-    return tradeData;
+    return {tradeData, errors};
 }
