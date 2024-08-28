@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getBinanceTradesList, TradeData} from "../api/getBinanceTradesList";
 import SocketClient from "../lib/socketClient";
 import {mapToTradeData} from "../lib/mapToTradeData";
@@ -21,17 +21,20 @@ export interface BinanceSocketData {
 export const useBinanceTradeData = (symbol: string) => {
     const [tradeData, setTradeData] = useState<Array<TradeData>>([]);
     const [errors, setErrors] = useState<Array<string>>([]);
+    const socketRef = useRef<SocketClient>();
 
     useEffect(() => {
+        socketRef.current?.removeHandler(symbol);
+
         const streamName = `${symbol.toLowerCase()}@trade`;
 
-        const socketClient = new SocketClient(`ws/${streamName}`, 'wss://stream.binance.com:9443/', (e) => setErrors((errs => [...errs, e])));
+        socketRef.current = new SocketClient(`ws/${streamName}`, 'wss://stream.binance.com:9443/', (e) => setErrors((errs => [...errs, e])));
 
         const getTradeData = async () => {
             try {
                 const data = await getBinanceTradesList(symbol);
                 setTradeData(data);
-                socketClient.setHandler(symbol, (params: BinanceSocketData) => {
+                socketRef.current?.setHandler(symbol, (params: BinanceSocketData) => {
                     setTradeData((td) => [...td, mapToTradeData(params)])
                 });
             } catch (e) {
@@ -41,7 +44,7 @@ export const useBinanceTradeData = (symbol: string) => {
         };
         getTradeData();
         return () => {
-            socketClient.removeHandler(symbol);
+            socketRef.current?.removeHandler(symbol);
         }
     }, [symbol]);
 

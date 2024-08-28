@@ -68,6 +68,7 @@ class SocketClient {
         this._handlers.get(symbol).push(callback);
     }
 
+
     removeHandler(method: string){
         this._handlers.delete(method);
     }
