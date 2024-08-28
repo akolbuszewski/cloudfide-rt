@@ -36,13 +36,13 @@ export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
             data: tradeData.map(item => new Date(item.time).toLocaleString()), // X-axis data (time)
         },
         yAxis: {
-            min: min * 0.9999999,
-            max: max * 1.0000001,
+            min: min * 0.9999,
+            max: max * 1.0001,
             type: 'value',
         },
         series: [
             {
-                name: 'Close Price',
+                name: 'Price',
                 type: 'line',
                 data: tradeData.map(item => item.price),
                 smooth: true,
