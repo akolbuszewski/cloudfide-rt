@@ -1,23 +1,25 @@
 import {FC} from "react";
 import {useBinanceTradeData} from "../hooks/useBinanceTradeData";
 import ReactEcharts from 'echarts-for-react'
+
 export interface TransactionChartProps {
     symbol: string;
 }
+
 export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
     const {tradeData, errors} = useBinanceTradeData(symbol)
-    if(!tradeData){
+    if (!tradeData) {
         return null;
     }
 
     const {min, max} = tradeData.reduce(({min, max}, dt) => {
         const price = parseInt(dt.price)
-        if( min > price) {
+        if (min > price) {
             min = parseInt(dt.price)
-        } else if (max < price){
+        } else if (max < price) {
             max = price;
         }
-        return {min ,max};
+        return {min, max};
     }, {min: Number.POSITIVE_INFINITY, max: Number.NEGATIVE_INFINITY})
 
     const getOption = () => ({
@@ -54,17 +56,16 @@ export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
     });
 
 
-
     return (
         <>
             <div>{errors}</div>
-        <ReactEcharts
-            option={getOption()} // Pass the option to the chart
-            style={{ height: '400px', width: '500px' }} // Chart dimensions
-            notMerge={true} // To ensure that the data updates correctly
-            lazyUpdate={true} // Performance optimization for updating the chart
-            theme={'light'} // Theme for the chart
-        />
-            </>
+            <ReactEcharts
+                option={getOption()} // Pass the option to the chart
+                style={{height: '400px', width: '500px'}} // Chart dimensions
+                notMerge={true} // To ensure that the data updates correctly
+                lazyUpdate={true} // Performance optimization for updating the chart
+                theme={'light'} // Theme for the chart
+            />
+        </>
     );
 }

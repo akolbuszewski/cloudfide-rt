@@ -3,7 +3,6 @@ import {getBinanceTradesList, TradeData} from "../api/getBinanceTradesList";
 import SocketClient from "../lib/socketClient";
 import {mapToTradeData} from "../lib/mapToTradeData";
 
-
 export interface BinanceSocketData {
     "e": string;    // Event type
     "E": number; // Event time

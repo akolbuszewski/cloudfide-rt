@@ -9,7 +9,8 @@ export interface TradeData {
     qty: string;
     time: number;
 }
+
 export async function getBinanceTradesList(symbol: string) {
-    const res = await axios.get<Array<TradeData>>(TRADES_URL, {params: { symbol }});
+    const res = await axios.get<Array<TradeData>>(TRADES_URL, {params: {symbol}});
     return res.data;
 }
