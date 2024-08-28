@@ -8,8 +8,6 @@ export interface TradeData {
     price: string;
     qty: string;
     time: number;
-    isBuyerMaker: boolean;
-    isBestMatch: boolean;
 }
 export async function getBinanceTradesList(symbol: string) {
     const res = await axios.get<Array<TradeData>>(TRADES_URL, {params: { symbol }});
