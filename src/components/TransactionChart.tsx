@@ -10,13 +10,14 @@ export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
         return null;
     }
 
-    tradeData.reduce(({min, max}, dt) => {
+    const {min, max} = tradeData.reduce(({min, max}, dt) => {
         const price = parseInt(dt.price)
         if( min > price) {
             min = parseInt(dt.price)
-        } else if {
-
+        } else if (max < price){
+            max = price;
         }
+        return {min ,max};
     }, {min: Number.POSITIVE_INFINITY, max: Number.NEGATIVE_INFINITY})
 
     const getOption = () => ({
@@ -35,8 +36,8 @@ export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
             data: tradeData.map(item => new Date(item.time).toLocaleString()), // X-axis data (time)
         },
         yAxis: {
-            min: 60090,
-            max: 60150,
+            min: min * 0.9999999,
+            max: max * 1.0000001,
             type: 'value',
         },
         series: [
