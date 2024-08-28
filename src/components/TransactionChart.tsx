@@ -5,7 +5,7 @@ export interface TransactionChartProps {
     symbol: string;
 }
 export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
-    const tradeData = useBinanceTradeData('BTCUSDT')
+    const tradeData = useBinanceTradeData(symbol)
     if(!tradeData){
         return null;
     }

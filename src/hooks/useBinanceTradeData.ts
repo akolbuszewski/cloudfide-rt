@@ -29,15 +29,14 @@ export const useBinanceTradeData = (symbol: string) => {
         const getTradeData = async () => {
             const data = await getBinanceTradesList(symbol);
             setTradeData(data);
-            socketClient.setHandler('trade', (params: BinanceSocketData) => {
+            socketClient.setHandler(symbol, (params: BinanceSocketData) => {
                 setTradeData((td) => [...td, mapToTradeData(params)])
             });
         };
         getTradeData();
-
-
-
-
+        () => {
+            socketClient.removeHandler(symbol);
+        }
         //const interval = setInterval(getTradeData, 100);
     }, [symbol]);
 

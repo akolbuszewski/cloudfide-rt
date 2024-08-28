@@ -1,3 +1,5 @@
+import {BinanceSocketData} from "../hooks/useBinanceTradeData";
+
 class SocketClient {
     private _ws: WebSocket;
     public baseUrl: string;
@@ -59,11 +61,15 @@ class SocketClient {
         }, 5000);
     }
 
-    setHandler(method, callback) {
+    setHandler(method: string, callback:(params: BinanceSocketData) => void) {
         if (!this._handlers.has(method)) {
             this._handlers.set(method, []);
         }
         this._handlers.get(method).push(callback);
+    }
+
+    removeHandler(method: string){
+        this._handlers.delete(method);
     }
 }
 
