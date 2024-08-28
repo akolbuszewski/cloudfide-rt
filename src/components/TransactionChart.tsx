@@ -5,7 +5,7 @@ export interface TransactionChartProps {
     symbol: string;
 }
 export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
-    const {tradeData} = useBinanceTradeData(symbol)
+    const {tradeData, errors} = useBinanceTradeData(symbol)
     if(!tradeData){
         return null;
     }
@@ -56,6 +56,8 @@ export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
 
 
     return (
+        <>
+            <div>{errors}</div>
         <ReactEcharts
             option={getOption()} // Pass the option to the chart
             style={{ height: '400px', width: '500px' }} // Chart dimensions
@@ -63,5 +65,6 @@ export const TransactionChart: FC<TransactionChartProps> = ({symbol}) => {
             lazyUpdate={true} // Performance optimization for updating the chart
             theme={'light'} // Theme for the chart
         />
+            </>
     );
 }
